@@ -20,7 +20,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 public class Player {
     @Id
@@ -55,5 +54,17 @@ public class Player {
     @Override
     public int hashCode() {
         return 31;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", position=" + position +
+                ", birthday=" + birthday +
+                ", team=" + team.getName() +
+                '}';
     }
 }
