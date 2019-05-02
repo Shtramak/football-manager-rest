@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,14 +32,15 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NaturalId
+    @Column(name = "name")
     private String name;
 
     @OneToOne
     @JoinColumn(name = "captain_id")
     private Player captain;
 
-    @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @Setter(AccessLevel.PRIVATE)
     private Set<Player> players = new HashSet<>();
 
