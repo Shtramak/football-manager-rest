@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -38,7 +39,7 @@ public class Player {
     private Position position;
 
     @Column(name = "birthday", nullable = false)
-    private LocalDateTime birthday;
+    private LocalDate birthday;
 
     @ManyToOne
     @JoinColumn(name = "team_id")

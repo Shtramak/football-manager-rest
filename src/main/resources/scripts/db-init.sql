@@ -16,7 +16,7 @@ CREATE TABLE player
   first_name VARCHAR(255) NOT NULL,
   last_name  VARCHAR(255) NOT NULL,
   position   VARCHAR(255) NOT NULL,
-  birthday   TIMESTAMP    NOT NULL,
+  birthday   DATE    NOT NULL,
   team_id    INT,
   CONSTRAINT player_PK PRIMARY KEY (id),
   CONSTRAINT player_team_FK FOREIGN KEY (team_id) REFERENCES team
