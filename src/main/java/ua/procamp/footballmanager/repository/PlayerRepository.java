@@ -1,4 +1,4 @@
-package ua.procamp.footballmanager.dao;
+package ua.procamp.footballmanager.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
