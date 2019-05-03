@@ -3,6 +3,10 @@ package ua.procamp.footballmanager.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.procamp.footballmanager.dao.TeamRepository;
+import ua.procamp.footballmanager.dto.PlayerDto;
+import ua.procamp.footballmanager.dto.PlayerMapper;
+import ua.procamp.footballmanager.dto.TeamDto;
+import ua.procamp.footballmanager.dto.TeamMapper;
 import ua.procamp.footballmanager.entity.Player;
 import ua.procamp.footballmanager.entity.Team;
 
@@ -13,7 +17,7 @@ import java.util.Optional;
 @Service
 @Transactional
 public class TeamServiceImpl implements TeamService {
-    private TeamRepository repository;
+    private final TeamRepository repository;
 
     public TeamServiceImpl(TeamRepository repository) {
         this.repository = repository;
@@ -21,22 +25,24 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Team> findAll() {
-        return repository.findAll();
+    public List<TeamDto> findAll() {
+        return TeamMapper.listTeamToListTeamDto(repository.findAll());
     }
 
     @Override
-    public Optional<Team> findById(Long id) {
-        return repository.findById(id);
+    @Transactional(readOnly = true)
+    public Optional<TeamDto> findById(Long id) {
+        return repository.findById(id).map(TeamMapper::teamToTeamDto);
     }
 
     @Override
-    public Team save(Team team) {
-        return repository.save(team);
+    public Team save(TeamDto teamDto) {
+        return repository.save(TeamMapper.teamDtoToTeam(teamDto));
     }
 
     @Override
-    public void update(Team team) {
+    public void update(TeamDto teamDto) {
+        Team team = TeamMapper.teamDtoToTeam(teamDto);
         Team managedTeam = repository.findById(team.getId()).orElseThrow(NoSuchElementException::new);
         managedTeam.setName(team.getName());
         managedTeam.setCaptain(team.getCaptain());
@@ -49,17 +55,21 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     @Transactional(readOnly = true)
-    public Player findCaptainByTeam(Team team) {
-        return repository.findCaptain(team.getId()).orElseThrow(NoSuchElementException::new);
+    public Player findCaptainByTeam(TeamDto teamDto) {
+        return repository.findCaptain(teamDto.getTeamId()).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
-    public void addNewPlayerToTeam(Player player, Team team) {
+    public void addNewPlayerToTeam(PlayerDto playerDto, TeamDto teamDto) {
+        Player player = PlayerMapper.playerDtoToPlayer(playerDto);
+        Team team = TeamMapper.teamDtoToTeam(teamDto);
         repository.addNewPlayerToTeam(player, team);
     }
 
     @Override
-    public void assignCaptainByTeam(Player player, Team team) {
+    public void assignCaptainByTeam(PlayerDto playerDto, TeamDto teamDto) {
+        Player player = PlayerMapper.playerDtoToPlayer(playerDto);
+        Team team = TeamMapper.teamDtoToTeam(teamDto);
         repository.assignCaptainByTeam(player, team);
     }
 }

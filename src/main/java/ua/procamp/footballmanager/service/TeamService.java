@@ -1,5 +1,7 @@
 package ua.procamp.footballmanager.service;
 
+import ua.procamp.footballmanager.dto.PlayerDto;
+import ua.procamp.footballmanager.dto.TeamDto;
 import ua.procamp.footballmanager.entity.Player;
 import ua.procamp.footballmanager.entity.Team;
 
@@ -7,19 +9,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TeamService {
-    List<Team> findAll();
+    List<TeamDto> findAll();
 
-    Optional<Team> findById(Long id);
+    Optional<TeamDto> findById(Long id);
 
-    Team save(Team team);
+    Team save(TeamDto teamDto);
 
-    void update(Team team);
+    void update(TeamDto teamDto);
 
     void removeById(Long id);
 
-    Player findCaptainByTeam(Team team);
+    Player findCaptainByTeam(TeamDto teamDto);
 
-    void addNewPlayerToTeam(Player player, Team team);
+    void addNewPlayerToTeam(PlayerDto playerDto, TeamDto teamDto);
 
-    void assignCaptainByTeam(Player player, Team team);
+    void assignCaptainByTeam(PlayerDto player, TeamDto teamDto);
 }

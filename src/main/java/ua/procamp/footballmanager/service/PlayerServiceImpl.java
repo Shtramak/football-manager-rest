@@ -4,6 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.procamp.footballmanager.dao.PlayerRepository;
+import ua.procamp.footballmanager.dto.PlayerDto;
+import ua.procamp.footballmanager.dto.PlayerMapper;
+import ua.procamp.footballmanager.dto.TeamDto;
+import ua.procamp.footballmanager.dto.TeamMapper;
 import ua.procamp.footballmanager.entity.Player;
 import ua.procamp.footballmanager.entity.Team;
 
@@ -23,23 +27,25 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Player> findAll() {
-        return repository.findAll();
+    public List<PlayerDto> findAll() {
+        return PlayerMapper.listPlayerToListPlayerDto(repository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Player> findById(Long id) {
-        return repository.findById(id);
+    public Optional<PlayerDto> findById(Long id) {
+        return repository.findById(id).map(PlayerMapper::playerToPlayerDto);
     }
 
     @Override
-    public Player save(Player player) {
-        return repository.save(player);
+    public PlayerDto save(PlayerDto playerDto) {
+        Player player = PlayerMapper.playerDtoToPlayer(playerDto);
+        return PlayerMapper.playerToPlayerDto(repository.save(player));
     }
 
     @Override
-    public void update(Player player) {
+    public void update(PlayerDto playerDto) {
+        Player player = PlayerMapper.playerDtoToPlayer(playerDto);
         Player managedPlayer = repository.findById(player.getId()).orElseThrow(NoSuchElementException::new);
         managedPlayer.setFirstName(player.getFirstName());
         managedPlayer.setLastName(player.getLastName());
@@ -55,7 +61,8 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Player> findPlayersByTeam(Team team) {
-        return repository.findByTeam(team.getId());
+    public List<PlayerDto> findPlayersByTeam(TeamDto teamDto) {
+        Team team = TeamMapper.teamDtoToTeam(teamDto);
+        return PlayerMapper.listPlayerToListPlayerDto(repository.findByTeam(team.getId()));
     }
 }

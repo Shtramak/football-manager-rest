@@ -1,21 +1,21 @@
 package ua.procamp.footballmanager.service;
 
-import ua.procamp.footballmanager.entity.Player;
-import ua.procamp.footballmanager.entity.Team;
+import ua.procamp.footballmanager.dto.PlayerDto;
+import ua.procamp.footballmanager.dto.TeamDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PlayerService {
-    List<Player> findAll();
+    List<PlayerDto> findAll();
 
-    Optional<Player> findById(Long id);
+    Optional<PlayerDto> findById(Long id);
 
-    Player save(Player player);
+    PlayerDto save(PlayerDto playerDto);
 
-    void update(Player player);
+    void update(PlayerDto playerDto);
 
     void removeById(Long id);
 
-    List<Player> findPlayersByTeam(Team team);
+    List<PlayerDto> findPlayersByTeam(TeamDto teamDto);
 }
