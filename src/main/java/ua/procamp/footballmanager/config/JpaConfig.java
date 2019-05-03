@@ -14,7 +14,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import javax.sql.DataSource;
 
 @Configuration
-@EnableJpaRepositories("ua.procamp.footballmanager.dao")
+@EnableJpaRepositories("ua.procamp.footballmanager.repository")
 @PropertySource("classpath:db.properties")
 public class JpaConfig {
     @Value("${database.url}")
