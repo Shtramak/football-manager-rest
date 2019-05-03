@@ -2,17 +2,18 @@ package ua.procamp.footballmanager.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.procamp.footballmanager.dao.TeamRepository;
 import ua.procamp.footballmanager.dto.PlayerDto;
 import ua.procamp.footballmanager.dto.PlayerMapper;
 import ua.procamp.footballmanager.dto.TeamDto;
 import ua.procamp.footballmanager.dto.TeamMapper;
 import ua.procamp.footballmanager.entity.Player;
 import ua.procamp.footballmanager.entity.Team;
+import ua.procamp.footballmanager.repository.TeamRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -36,40 +37,36 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Team save(TeamDto teamDto) {
-        return repository.save(TeamMapper.teamDtoToTeam(teamDto));
-    }
-
-    @Override
-    public void update(TeamDto teamDto) {
+    public TeamDto save(TeamDto teamDto) {
         Team team = TeamMapper.teamDtoToTeam(teamDto);
-        Team managedTeam = repository.findById(team.getId()).orElseThrow(NoSuchElementException::new);
-        managedTeam.setName(team.getName());
-        managedTeam.setCaptain(team.getCaptain());
+        return TeamMapper.teamToTeamDto(repository.save(team));
     }
 
     @Override
     public void removeById(Long id) {
+        Team team = repository.findById(id).orElseThrow();
+        Set<Player> players = team.getPlayers();
+        players.forEach(player -> player.setTeam(null));
         repository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Player findCaptainByTeam(TeamDto teamDto) {
-        return repository.findCaptain(teamDto.getTeamId()).orElseThrow(NoSuchElementException::new);
+    public PlayerDto findCaptainByTeam(Long teamId) {
+        return repository
+                .findCaptain(teamId)
+                .map(PlayerMapper::playerToPlayerDto)
+                .orElseThrow(NoSuchElementException::new);
     }
 
     @Override
-    public void addNewPlayerToTeam(PlayerDto playerDto, TeamDto teamDto) {
+    public void addNewPlayerToTeam(Long teamId, PlayerDto playerDto) {
         Player player = PlayerMapper.playerDtoToPlayer(playerDto);
-        Team team = TeamMapper.teamDtoToTeam(teamDto);
-        repository.addNewPlayerToTeam(player, team);
+        repository.addNewPlayerToTeam(teamId, player);
     }
 
     @Override
-    public void assignCaptainByTeam(PlayerDto playerDto, TeamDto teamDto) {
-        Player player = PlayerMapper.playerDtoToPlayer(playerDto);
-        Team team = TeamMapper.teamDtoToTeam(teamDto);
-        repository.assignCaptainByTeam(player, team);
+    public void assignCaptainByTeam(Long teamId, Long playerId) {
+        repository.assignCaptainByTeam(teamId, playerId);
     }
 }

@@ -3,13 +3,13 @@ package ua.procamp.footballmanager.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.procamp.footballmanager.dao.PlayerRepository;
 import ua.procamp.footballmanager.dto.PlayerDto;
 import ua.procamp.footballmanager.dto.PlayerMapper;
 import ua.procamp.footballmanager.dto.TeamDto;
 import ua.procamp.footballmanager.dto.TeamMapper;
 import ua.procamp.footballmanager.entity.Player;
 import ua.procamp.footballmanager.entity.Team;
+import ua.procamp.footballmanager.repository.PlayerRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
