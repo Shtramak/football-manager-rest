@@ -4,7 +4,7 @@ import ua.procamp.footballmanager.entity.Player;
 import ua.procamp.footballmanager.entity.Position;
 import ua.procamp.footballmanager.entity.Team;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -29,14 +29,17 @@ public class PlayerMapper {
     }
 
     public static Player playerDtoToPlayer(PlayerDto playerDto) {
-        LocalDateTime birthday = LocalDateTime
-                .parse(playerDto.getBirthday(), DateTimeFormatter.ISO_LOCAL_DATE);
-        Player player = new Player();
-        player.setId(playerDto.getPlayerId());
-        player.setFirstName(playerDto.getFirstName());
-        player.setLastName(playerDto.getLastName());
-        player.setPosition(Position.valueOf(playerDto.getPosition()));
-        player.setBirthday(birthday);
+        Player player = null;
+        if (playerDto != null) {
+            LocalDate birthday = LocalDate
+                    .parse(playerDto.getBirthday(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            player = new Player();
+            player.setId(playerDto.getPlayerId());
+            player.setFirstName(playerDto.getFirstName());
+            player.setLastName(playerDto.getLastName());
+            player.setPosition(Position.valueOf(playerDto.getPosition()));
+            player.setBirthday(birthday);
+        }
         return player;
     }
 
