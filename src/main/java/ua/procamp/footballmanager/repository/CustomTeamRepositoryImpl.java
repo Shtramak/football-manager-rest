@@ -21,7 +21,13 @@ public class CustomTeamRepositoryImpl implements CustomTeamRepository {
         Team managedTeam = entityManager.createQuery("select t from Team t where t.id=:id", Team.class)
                 .setParameter("id", teamId)
                 .getSingleResult();
-        managedTeam.addPlayer(player);
+        Long playerId = player.getId();
+        if (playerId == null) {
+            managedTeam.addPlayer(player);
+        } else {
+            Player managedPlayer = managedPlayer(playerId);
+            managedTeam.addPlayer(managedPlayer);
+        }
     }
 
     @Override
@@ -31,12 +37,22 @@ public class CustomTeamRepositoryImpl implements CustomTeamRepository {
                 .getSingleResult();
         Set<Player> players = managedTeam.getPlayers();
         if (containsPlayerId(playerId, players)) {
-            Player player = entityManager.find(Player.class, playerId);
+            Player player = managedPlayer(playerId);
+
             managedTeam.setCaptain(player);
         } else {
             String message = String.format("Player with id %d is not a player of team %s", playerId, managedTeam.getName());
             throw new EntityNotFoundException(message);
         }
+    }
+
+    private Player managedPlayer(Long playerId) {
+        Player player = entityManager.find(Player.class, playerId);
+        if (player == null) {
+            String message = String.format("Player with id %d not found", playerId);
+            throw new EntityNotFoundException(message);
+        }
+        return player;
     }
 
     private boolean containsPlayerId(Long playerId, Set<Player> players) {

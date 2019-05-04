@@ -1,7 +1,6 @@
 package ua.procamp.footballmanager.service;
 
 import ua.procamp.footballmanager.dto.PlayerDto;
-import ua.procamp.footballmanager.dto.TeamDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +16,5 @@ public interface PlayerService {
 
     void removeById(Long id);
 
-    List<PlayerDto> findPlayersByTeam(TeamDto teamDto);
+    List<PlayerDto> findPlayersByTeam(Long teamId);
 }
