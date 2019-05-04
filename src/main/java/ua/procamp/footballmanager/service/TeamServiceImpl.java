@@ -8,10 +8,10 @@ import ua.procamp.footballmanager.dto.TeamDto;
 import ua.procamp.footballmanager.dto.TeamMapper;
 import ua.procamp.footballmanager.entity.Player;
 import ua.procamp.footballmanager.entity.Team;
+import ua.procamp.footballmanager.exception.EntityNotFoundException;
 import ua.procamp.footballmanager.repository.TeamRepository;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,7 +44,10 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void removeById(Long id) {
-        Team team = repository.findById(id).orElseThrow();
+        Team team = repository.findById(id).orElseThrow(() -> {
+            String message = String.format("No team with id %d found", id);
+            return new EntityNotFoundException(message);
+        });
         Set<Player> players = team.getPlayers();
         players.forEach(player -> player.setTeam(null));
         repository.deleteById(id);
@@ -56,7 +59,10 @@ public class TeamServiceImpl implements TeamService {
         return repository
                 .findCaptain(teamId)
                 .map(PlayerMapper::playerToPlayerDto)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(() -> {
+                    String message = String.format("No captain for team with id %d found", teamId);
+                    return new EntityNotFoundException(message);
+                });
     }
 
     @Override

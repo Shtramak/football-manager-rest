@@ -1,7 +1,9 @@
 package ua.procamp.footballmanager.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ua.procamp.footballmanager.dto.PlayerDto;
 import ua.procamp.footballmanager.dto.TeamDto;
+import ua.procamp.footballmanager.exception.EntityNotFoundException;
 import ua.procamp.footballmanager.service.TeamService;
 
 import java.util.List;
@@ -32,7 +35,10 @@ public class TeamController {
 
     @GetMapping("/{id}")
     public TeamDto findById(@PathVariable Long id) {
-        return service.findById(id).orElseThrow();
+        return service.findById(id).orElseThrow(() -> {
+            String message = String.format("No team with id %d found", id);
+            return new EntityNotFoundException(message);
+        });
     }
 
     @PostMapping
@@ -62,5 +68,11 @@ public class TeamController {
     @ResponseStatus(HttpStatus.CREATED)
     public void addNewPlayerToTeam(@PathVariable Long id, @RequestBody PlayerDto playerDto) {
         service.addNewPlayerToTeam(id, playerDto);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleException(EntityNotFoundException exception) {
+        String message = exception.getMessage();
+        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 }

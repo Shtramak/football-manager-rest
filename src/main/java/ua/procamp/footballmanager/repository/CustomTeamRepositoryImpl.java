@@ -4,7 +4,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ua.procamp.footballmanager.entity.Player;
 import ua.procamp.footballmanager.entity.Team;
-import ua.procamp.footballmanager.exception.TeamRepositoryException;
+import ua.procamp.footballmanager.exception.EntityNotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -34,8 +34,8 @@ public class CustomTeamRepositoryImpl implements CustomTeamRepository {
             Player player = entityManager.find(Player.class, playerId);
             managedTeam.setCaptain(player);
         } else {
-            String message = String.format("Player with id %d is not a player of team %s", playerId, managedTeam);
-            throw new TeamRepositoryException(message);
+            String message = String.format("Player with id %d is not a player of team %s", playerId, managedTeam.getName());
+            throw new EntityNotFoundException(message);
         }
     }
 
