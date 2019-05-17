@@ -48,4 +48,10 @@ public class PlayerMapper {
                 .map(PlayerMapper::playerToPlayerDto)
                 .collect(toList());
     }
+
+    public static List<Player> listPlayerDtoToListPlayer(List<PlayerDto> playerDtos) {
+        return playerDtos.stream()
+                .map(PlayerMapper::playerDtoToPlayer)
+                .collect(toList());
+    }
 }
