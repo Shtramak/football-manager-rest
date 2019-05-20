@@ -9,16 +9,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ua.procamp.footballmanager.dto.PlayerDto;
 import ua.procamp.footballmanager.dto.PlayerMapper;
 import ua.procamp.footballmanager.entity.Player;
-import ua.procamp.footballmanager.entity.Position;
 import ua.procamp.footballmanager.repository.PlayerRepository;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static ua.procamp.footballmanager.TestUtils.generatePlayerWithId;
 
 @ExtendWith(MockitoExtension.class)
 class PlayerServiceImplTest {
@@ -47,18 +50,54 @@ class PlayerServiceImplTest {
     void findAllWhenNoDataReturnsEmptyList() {
         List<Player> emptyList = Collections.emptyList();
         when(repository.findAll()).thenReturn(emptyList);
+        verifyNoMoreInteractions(repository);
         List<PlayerDto> players = service.findAll();
         List<Player> actual = PlayerMapper.listPlayerDtoToListPlayer(players);
-        assertThat(actual, Matchers.equalTo(emptyList));
+        assertThat(actual, equalTo(emptyList));
     }
 
-    private Player generatePlayerWithId(Long id) {
-        Player player = new Player();
-        player.setId(id);
-        player.setFirstName("FirstName-" + id);
-        player.setLastName("LastName-" + id);
-        player.setBirthday(LocalDate.now());
-        player.setPosition(Position.DEFENDER);
-        return player;
+    @Test
+    void findByIdWhenPlayerExistsReturnsOptionalWithPlayer() {
+        long playerId = 1L;
+        Player expected = generatePlayerWithId(playerId);
+        when(repository.findById(playerId)).thenReturn(Optional.of(expected));
+        verifyNoMoreInteractions(repository);
+        Player actual = service.findById(playerId)
+                .map(PlayerMapper::playerDtoToPlayer)
+                .orElseThrow();
+        assertThat(actual, equalTo(expected));
+    }
+
+    @Test
+    void findByIdWhenPlayerNotExistsReturnsOptionalEmpty() {
+        long notExistedId = 1L;
+        when(repository.findById(notExistedId)).thenReturn(Optional.empty());
+        verifyNoMoreInteractions(repository);
+        Optional<PlayerDto> actual = service.findById(notExistedId);
+        assertThat(actual, equalTo(Optional.empty()));
+    }
+
+    @Test
+    void saveNotExistingPlayerReturnPlayerWithId() {
+        Long playerId = 1L;
+        Player playerWithoutId = generatePlayerWithId(playerId);
+        playerWithoutId.setId(null);
+        Player expected = generatePlayerWithId(playerId);
+        when(repository.save(playerWithoutId)).thenReturn(expected);
+        PlayerDto playerDtoWithoutId = PlayerMapper.playerToPlayerDto(playerWithoutId);
+        PlayerDto playerDtoWithId = service.save(playerDtoWithoutId);
+        Player actual = PlayerMapper.playerDtoToPlayer(playerDtoWithId);
+        assertThat(actual, equalTo(expected));
+    }
+
+    @Test
+    void savePlayerWithIdThrowsIllegalStateException() {
+        long playerId = 1L;
+        Player playerWithId = generatePlayerWithId(playerId);
+        PlayerDto playerDtoWithId = PlayerMapper.playerToPlayerDto(playerWithId);
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> service.save(playerDtoWithId));
+        String message = String.format("You're trying to save an existing player with id=%d..." +
+                "If it is exactly what you want - pleas use update request", playerId);
+        assertEquals(message, exception.getMessage());
     }
 }
