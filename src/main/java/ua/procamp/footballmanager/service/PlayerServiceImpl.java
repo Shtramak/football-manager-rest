@@ -10,6 +10,7 @@ import ua.procamp.footballmanager.exception.EntityNotFoundException;
 import ua.procamp.footballmanager.repository.PlayerRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -36,12 +37,20 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerDto save(PlayerDto playerDto) {
+        Objects.requireNonNull(playerDto);
+        Long playerId = playerDto.getPlayerId();
+        if (playerId != null) {
+            String message = String.format("You're trying to save an existing player with id=%d..." +
+                    "If it is exactly what you want - pleas use update request", playerId);
+            throw new IllegalStateException(message);
+        }
         Player player = PlayerMapper.playerDtoToPlayer(playerDto);
         return PlayerMapper.playerToPlayerDto(repository.save(player));
     }
 
     @Override
     public void update(PlayerDto playerDto) {
+        Objects.requireNonNull(playerDto);
         Player player = PlayerMapper.playerDtoToPlayer(playerDto);
         Player managedPlayer = repository.findById(player.getId())
                 .orElseThrow(() -> {
@@ -52,7 +61,6 @@ public class PlayerServiceImpl implements PlayerService {
         managedPlayer.setLastName(player.getLastName());
         managedPlayer.setPosition(player.getPosition());
         managedPlayer.setBirthday(player.getBirthday());
-        managedPlayer.setTeam(player.getTeam());
     }
 
     @Override
