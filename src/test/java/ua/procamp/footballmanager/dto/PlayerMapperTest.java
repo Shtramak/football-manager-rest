@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Test;
 import ua.procamp.footballmanager.entity.Player;
 import ua.procamp.footballmanager.entity.Team;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ua.procamp.footballmanager.TestUtils.generatePlayerWithIdAndNoTeam;
+import static ua.procamp.footballmanager.TestUtils.mapPlayerFieldsOnPlayerDtoFields;
 
 class PlayerMapperTest {
 
@@ -18,7 +18,7 @@ class PlayerMapperTest {
     void playerToPlayerDtoWithoutTeamReturnsPlayerDtoWithNullTeamName() {
         Player player = generatePlayerWithIdAndNoTeam(1);
         PlayerDto playerDto = new PlayerDto();
-        setPlayerFieldsToPlayerDtoFields(player, playerDto);
+        mapPlayerFieldsOnPlayerDtoFields(player, playerDto);
         PlayerDto actual = PlayerMapper.playerToPlayerDto(player);
         PlayerMapper.playerToPlayerDto(player);
         assertThat(playerDto, samePropertyValuesAs(actual));
@@ -31,7 +31,7 @@ class PlayerMapperTest {
         team.setName("testTeam");
         player.setTeam(team);
         PlayerDto playerDto = new PlayerDto();
-        setPlayerFieldsToPlayerDtoFields(player, playerDto);
+        mapPlayerFieldsOnPlayerDtoFields(player, playerDto);
         PlayerDto actual = PlayerMapper.playerToPlayerDto(player);
         PlayerMapper.playerToPlayerDto(player);
         assertThat(playerDto, samePropertyValuesAs(actual));
@@ -41,7 +41,7 @@ class PlayerMapperTest {
     void playerDtoToPlayerWithoutTeam() {
         Player player = generatePlayerWithIdAndNoTeam(1);
         PlayerDto playerDto = new PlayerDto();
-        setPlayerFieldsToPlayerDtoFields(player, playerDto);
+        mapPlayerFieldsOnPlayerDtoFields(player, playerDto);
         Player actual = PlayerMapper.playerDtoToPlayer(playerDto);
         assertThat(player, samePropertyValuesAs(actual));
     }
@@ -55,14 +55,14 @@ class PlayerMapperTest {
         PlayerDto playerDto1 = new PlayerDto();
         PlayerDto playerDto2 = new PlayerDto();
         PlayerDto playerDto3 = new PlayerDto();
-        setPlayerFieldsToPlayerDtoFields(player1, playerDto1);
-        setPlayerFieldsToPlayerDtoFields(player2, playerDto2);
-        setPlayerFieldsToPlayerDtoFields(player3, playerDto3);
+        mapPlayerFieldsOnPlayerDtoFields(player1, playerDto1);
+        mapPlayerFieldsOnPlayerDtoFields(player2, playerDto2);
+        mapPlayerFieldsOnPlayerDtoFields(player3, playerDto3);
         List<PlayerDto> playersDto = List.of(playerDto1, playerDto2, playerDto3);
         List<PlayerDto> actual = PlayerMapper.listPlayerToListPlayerDto(players);
         assertEquals(playersDto.size(), actual.size());
         for (int i = 0; i < actual.size(); i++) {
-            assertThat(playersDto.get(i),samePropertyValuesAs(actual.get(i)));
+            assertThat(playersDto.get(i), samePropertyValuesAs(actual.get(i)));
         }
     }
 
@@ -75,27 +75,14 @@ class PlayerMapperTest {
         PlayerDto playerDto1 = new PlayerDto();
         PlayerDto playerDto2 = new PlayerDto();
         PlayerDto playerDto3 = new PlayerDto();
-        setPlayerFieldsToPlayerDtoFields(player1, playerDto1);
-        setPlayerFieldsToPlayerDtoFields(player2, playerDto2);
-        setPlayerFieldsToPlayerDtoFields(player3, playerDto3);
+        mapPlayerFieldsOnPlayerDtoFields(player1, playerDto1);
+        mapPlayerFieldsOnPlayerDtoFields(player2, playerDto2);
+        mapPlayerFieldsOnPlayerDtoFields(player3, playerDto3);
         List<PlayerDto> playersDto = List.of(playerDto1, playerDto2, playerDto3);
         List<Player> actual = PlayerMapper.listPlayerDtoToListPlayer(playersDto);
         assertEquals(playersDto.size(), actual.size());
         for (int i = 0; i < actual.size(); i++) {
-            assertThat(players.get(i),samePropertyValuesAs(actual.get(i)));
-        }
-    }
-
-    private void setPlayerFieldsToPlayerDtoFields(Player player, PlayerDto playerDto) {
-        playerDto.setPlayerId(player.getId());
-        playerDto.setFirstName(player.getFirstName());
-        playerDto.setLastName(player.getLastName());
-        playerDto.setPosition(player.getPosition().toString());
-        String birthday = player.getBirthday()
-                .format(DateTimeFormatter.ISO_LOCAL_DATE);
-        playerDto.setBirthday(birthday);
-        if (player.getTeam() != null) {
-            playerDto.setTeamName(player.getTeam().getName());
+            assertThat(players.get(i), samePropertyValuesAs(actual.get(i)));
         }
     }
 }
