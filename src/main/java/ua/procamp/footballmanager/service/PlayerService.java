@@ -8,13 +8,13 @@ import java.util.Optional;
 public interface PlayerService {
     List<PlayerDto> findAll();
 
-    Optional<PlayerDto> findById(Long id);
+    Optional<PlayerDto> findById(long id);
 
     PlayerDto save(PlayerDto playerDto);
 
     void update(PlayerDto playerDto);
 
-    void removeById(Long id);
+    void removeById(long id);
 
-    List<PlayerDto> findPlayersByTeam(Long teamId);
+    List<PlayerDto> findPlayersByTeam(long teamId);
 }

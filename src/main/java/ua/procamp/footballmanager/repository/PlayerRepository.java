@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface PlayerRepository extends JpaRepository<Player, Long> {
     @Query("SELECT t.players FROM Team t WHERE t.id=:id")
-    List<Player> findByTeam(@Param("id") Long id);
+    List<Player> findByTeam(@Param("id") long id);
 }

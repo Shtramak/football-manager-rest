@@ -32,7 +32,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<TeamDto> findById(Long id) {
+    public Optional<TeamDto> findById(long id) {
         return repository.findById(id).map(TeamMapper::teamToTeamDto);
     }
 
@@ -43,7 +43,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void removeById(Long id) {
+    public void removeById(long id) {
         Team team = repository.findById(id).orElseThrow(() -> {
             String message = String.format("No team with id %d found", id);
             return new EntityNotFoundException(message);
@@ -55,7 +55,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     @Transactional(readOnly = true)
-    public PlayerDto findCaptainByTeam(Long teamId) {
+    public PlayerDto findCaptainByTeam(long teamId) {
         return repository
                 .findCaptain(teamId)
                 .map(PlayerMapper::playerToPlayerDto)
@@ -66,13 +66,13 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void addNewPlayerToTeam(Long teamId, PlayerDto playerDto) {
+    public void addNewPlayerToTeam(long teamId, PlayerDto playerDto) {
         Player player = PlayerMapper.playerDtoToPlayer(playerDto);
         repository.addNewPlayerToTeam(teamId, player);
     }
 
     @Override
-    public void assignCaptainByTeam(Long teamId, Long playerId) {
+    public void assignCaptainByTeam(long teamId, long playerId) {
         repository.assignCaptainByTeam(teamId, playerId);
     }
 }

@@ -33,7 +33,7 @@ public class PlayerController {
     }
 
     @GetMapping("/{id}")
-    public PlayerDto findById(@PathVariable Long id) {
+    public PlayerDto findById(@PathVariable long id) {
         return service.findById(id).orElseThrow(() -> {
             String message = String.format("No player with id %d found", id);
             return new EntityNotFoundException(message);
@@ -46,20 +46,20 @@ public class PlayerController {
         return service.save(playerDto);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void update(@PathVariable Long id, @RequestBody PlayerDto playerDto) {
+    public void update(@RequestBody PlayerDto playerDto) {
         service.update(playerDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeById(@PathVariable Long id){
+    public void removeById(@PathVariable long id) {
         service.removeById(id);
     }
 
     @GetMapping("/team/{teamId}")
-    public List<PlayerDto> findPlayersByTeam(@PathVariable Long teamId){
+    public List<PlayerDto> findPlayersByTeam(@PathVariable long teamId) {
         return service.findPlayersByTeam(teamId);
     }
 

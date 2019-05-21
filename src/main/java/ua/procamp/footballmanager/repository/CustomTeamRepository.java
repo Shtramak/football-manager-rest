@@ -3,7 +3,7 @@ package ua.procamp.footballmanager.repository;
 import ua.procamp.footballmanager.entity.Player;
 
 public interface CustomTeamRepository {
-    void addNewPlayerToTeam(Long teamId, Player player);
+    void addNewPlayerToTeam(long teamId, Player player);
 
-    void assignCaptainByTeam(Long teamId, Long playerId);
+    void assignCaptainByTeam(long teamId, long playerId);
 }

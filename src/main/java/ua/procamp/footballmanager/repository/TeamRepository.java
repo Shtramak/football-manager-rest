@@ -10,5 +10,5 @@ import java.util.Optional;
 
 public interface TeamRepository extends JpaRepository<Team, Long>, CustomTeamRepository {
     @Query("SELECT t.captain from Team t where t.id=:id")
-    Optional<Player> findCaptain(@Param("id") Long id);
+    Optional<Player> findCaptain(@Param("id") long id);
 }

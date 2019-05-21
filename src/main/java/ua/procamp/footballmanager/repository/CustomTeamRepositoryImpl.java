@@ -17,7 +17,7 @@ public class CustomTeamRepositoryImpl implements CustomTeamRepository {
     private EntityManager entityManager;
 
     @Override
-    public void addNewPlayerToTeam(Long teamId, Player player) {
+    public void addNewPlayerToTeam(long teamId, Player player) {
         Team managedTeam = entityManager.createQuery("select t from Team t where t.id=:id", Team.class)
                 .setParameter("id", teamId)
                 .getSingleResult();
@@ -31,7 +31,7 @@ public class CustomTeamRepositoryImpl implements CustomTeamRepository {
     }
 
     @Override
-    public void assignCaptainByTeam(Long teamId, Long playerId) {
+    public void assignCaptainByTeam(long teamId, long playerId) {
         Team managedTeam = entityManager.createQuery("select t from Team t left join fetch t.players where t.id=:id", Team.class)
                 .setParameter("id", teamId)
                 .getSingleResult();
@@ -46,7 +46,7 @@ public class CustomTeamRepositoryImpl implements CustomTeamRepository {
         }
     }
 
-    private Player managedPlayer(Long playerId) {
+    private Player managedPlayer(long playerId) {
         Player player = entityManager.find(Player.class, playerId);
         if (player == null) {
             String message = String.format("Player with id %d not found", playerId);
@@ -55,7 +55,7 @@ public class CustomTeamRepositoryImpl implements CustomTeamRepository {
         return player;
     }
 
-    private boolean containsPlayerId(Long playerId, Set<Player> players) {
+    private boolean containsPlayerId(long playerId, Set<Player> players) {
         return players.stream().map(Player::getId).anyMatch(id -> id.equals(playerId));
     }
 }

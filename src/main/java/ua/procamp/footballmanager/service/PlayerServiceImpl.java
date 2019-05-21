@@ -31,7 +31,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<PlayerDto> findById(Long id) {
+    public Optional<PlayerDto> findById(long id) {
         return repository.findById(id).map(PlayerMapper::playerToPlayerDto);
     }
 
@@ -64,13 +64,13 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public void removeById(Long id) {
+    public void removeById(long id) {
         repository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<PlayerDto> findPlayersByTeam(Long teamId) {
+    public List<PlayerDto> findPlayersByTeam(long teamId) {
         return PlayerMapper.listPlayerToListPlayerDto(repository.findByTeam(teamId));
     }
 }
