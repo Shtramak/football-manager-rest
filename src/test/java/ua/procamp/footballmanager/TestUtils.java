@@ -21,7 +21,7 @@ public class TestUtils {
         return player;
     }
 
-    public static Team generateTeamWithId(long id) {
+    public static Team generateTeamWithIdAndNoCaptain(long id) {
         Team team = new Team();
         team.setId(id);
         team.setName("Team-" + id);

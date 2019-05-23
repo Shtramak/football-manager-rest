@@ -23,7 +23,9 @@ public class TeamMapper {
         Team team = new Team();
         team.setId(teamDtoDto.getTeamId());
         team.setName(teamDtoDto.getTeamName());
-        team.setCaptain(playerDtoToPlayer(teamDtoDto.getCaptain()));
+        if (teamDtoDto.getCaptain() != null) {
+            team.setCaptain(playerDtoToPlayer(teamDtoDto.getCaptain()));
+        }
         return team;
     }
 
