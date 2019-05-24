@@ -58,13 +58,17 @@ public class Player {
 
     @Override
     public String toString() {
+        String teamName = "null";
+        if (team != null) {
+            teamName = team.getName();
+        }
         return "Player{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", position=" + position +
                 ", birthday=" + birthday +
-                ", team=" + team.getName() +
+                ", team=" + teamName +
                 '}';
     }
 }
