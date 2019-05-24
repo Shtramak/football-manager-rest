@@ -82,10 +82,10 @@ class PlayerServiceImplTest {
 
     @Test
     void saveNotExistingPlayerReturnPlayerWithId() {
-        Long playerId = 1L;
-        Player playerWithoutId = generatePlayerWithIdAndNoTeam(playerId);
+        Player playerWithoutId = generatePlayerWithIdAndNoTeam(-1);
         playerWithoutId.setId(null);
-        Player expected = generatePlayerWithIdAndNoTeam(playerId);
+        Long generatedId = 1L;
+        Player expected = generatePlayerWithIdAndNoTeam(generatedId);
         when(repository.save(playerWithoutId)).thenReturn(expected);
         verifyNoMoreInteractions(repository);
         PlayerDto playerDtoWithoutId = PlayerMapper.playerToPlayerDto(playerWithoutId);

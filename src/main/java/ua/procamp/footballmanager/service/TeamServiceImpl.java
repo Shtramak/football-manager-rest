@@ -12,6 +12,7 @@ import ua.procamp.footballmanager.exception.EntityNotFoundException;
 import ua.procamp.footballmanager.repository.TeamRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -38,6 +39,12 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamDto save(TeamDto teamDto) {
+        Objects.requireNonNull(teamDto);
+        Long teamId = teamDto.getTeamId();
+        if (teamId != null) {
+            String message = String.format("You're trying to save an existing team with id=%d...", teamId);
+            throw new IllegalStateException(message);
+        }
         Team team = TeamMapper.teamDtoToTeam(teamDto);
         return TeamMapper.teamToTeamDto(repository.save(team));
     }
