@@ -8,6 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ua.procamp.footballmanager.dto.PlayerDto;
+import ua.procamp.footballmanager.dto.PlayerMapper;
 import ua.procamp.footballmanager.dto.TeamDto;
 import ua.procamp.footballmanager.dto.TeamMapper;
 import ua.procamp.footballmanager.entity.Player;
@@ -30,7 +32,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static ua.procamp.footballmanager.TestUtils.generateTeamWithIdAndNoCaptain;
+import static ua.procamp.footballmanager.TestUtils.generatePlayerWithIdAndNoTeam;
+import static ua.procamp.footballmanager.TestUtils.generateTeamWithIdAndNoPlayers;
 import static ua.procamp.footballmanager.TestUtils.generateTeamWithIdAndPlayers;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,9 +49,9 @@ class TeamServiceImplTest {
 
     @Test
     void findAllWhenRepoHasDataReturnsListOfTeams() {
-        Team team1 = generateTeamWithIdAndNoCaptain(1);
-        Team team2 = generateTeamWithIdAndNoCaptain(2);
-        Team team3 = generateTeamWithIdAndNoCaptain(3);
+        Team team1 = generateTeamWithIdAndNoPlayers(1);
+        Team team2 = generateTeamWithIdAndNoPlayers(2);
+        Team team3 = generateTeamWithIdAndNoPlayers(3);
         List<Team> teams = List.of(team1, team2, team3);
         when(repository.findAll()).thenReturn(teams);
         verifyNoMoreInteractions(repository);
@@ -71,7 +74,7 @@ class TeamServiceImplTest {
     @Test
     void findByIdWhenTeamExistsReturnsOptionalWithTeam() {
         long teamId = 1;
-        Team team = generateTeamWithIdAndNoCaptain(teamId);
+        Team team = generateTeamWithIdAndNoPlayers(teamId);
         when(repository.findById(teamId)).thenReturn(Optional.of(team));
         Mockito.verifyNoMoreInteractions(repository);
         TeamDto teamDto = TeamMapper.teamToTeamDto(team);
@@ -89,10 +92,10 @@ class TeamServiceImplTest {
 
     @Test
     void saveNotExistingTeamReturnTeamWithId() {
-        Team teamWithoutId = generateTeamWithIdAndNoCaptain(-1);
+        Team teamWithoutId = generateTeamWithIdAndNoPlayers(-1);
         teamWithoutId.setId(null);
         long generatedId = 1;
-        Team expected = generateTeamWithIdAndNoCaptain(generatedId);
+        Team expected = generateTeamWithIdAndNoPlayers(generatedId);
         when(repository.save(teamWithoutId)).thenReturn(expected);
         verifyZeroInteractions(repository);
         TeamDto teamWithoutIdDto = TeamMapper.teamToTeamDto(teamWithoutId);
@@ -104,7 +107,7 @@ class TeamServiceImplTest {
     @Test
     void saveTeamWithIdThrowsIllegalStateException() {
         long teamId = 1L;
-        Team teamWithId = generateTeamWithIdAndNoCaptain(teamId);
+        Team teamWithId = generateTeamWithIdAndNoPlayers(teamId);
         TeamDto teamWithIdDto = TeamMapper.teamToTeamDto(teamWithId);
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> service.save(teamWithIdDto));
         String message = String.format("You're trying to save an existing team with id=%d...", teamId);
@@ -141,4 +144,44 @@ class TeamServiceImplTest {
         assertThat(exception.getMessage(), equalTo(message));
     }
 
+    @Test
+    void findCaptainByTeamWhenCaptainExistsReturnsCaptainAsPlayerDto() {
+        long teamId = 1;
+        Player captain = generatePlayerWithIdAndNoTeam(1);
+        when(repository.findCaptain(teamId)).thenReturn(Optional.of(captain));
+        verifyNoMoreInteractions(repository);
+        PlayerDto actual = service.findCaptainByTeam(teamId);
+        PlayerDto expected = PlayerMapper.playerToPlayerDto(captain);
+        assertThat(actual, samePropertyValuesAs(expected));
+    }
+
+    @Test
+    void findCaptainByTeamWhenCaptainNotExistsThrowsEntityNotFoundException() {
+        long teamId = 1;
+        when(repository.findCaptain(teamId)).thenReturn(Optional.empty());
+        verifyNoMoreInteractions(repository);
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> service.findCaptainByTeam(teamId));
+        String message = String.format("No captain for team with id %d found", teamId);
+        assertThat(exception.getMessage(), equalTo(message));
+    }
+
+    @Test
+    void addNewPlayerToTeam() {
+        long playerId = 1;
+        Player player = generatePlayerWithIdAndNoTeam(playerId);
+        long teamId = 1;
+        PlayerDto playerDto = PlayerMapper.playerToPlayerDto(player);
+        service.addNewPlayerToTeam(teamId, playerDto);
+        verify(repository, times(1)).addNewPlayerToTeam(teamId, player);
+        verifyNoMoreInteractions(repository);
+    }
+
+    @Test
+    void assignCaptainByTeam() {
+        long captainId = 1;
+        long teamId = 1;
+        service.assignCaptainByTeam(teamId, captainId);
+        verify(repository, times(1)).assignCaptainByTeam(teamId, 1);
+        verifyNoMoreInteractions(repository);
+    }
 }

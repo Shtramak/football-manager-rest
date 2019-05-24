@@ -12,13 +12,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static ua.procamp.footballmanager.TestUtils.generatePlayerWithIdAndNoTeam;
-import static ua.procamp.footballmanager.TestUtils.generateTeamWithIdAndNoCaptain;
+import static ua.procamp.footballmanager.TestUtils.generateTeamWithIdAndNoPlayers;
 import static ua.procamp.footballmanager.TestUtils.mapTeamFieldsOnTeamDtoFields;
 
 class TeamMapperTest {
     @Test
     void teamToTeamDtoWithoutCaptainReturnsTeamDtoWithNullCaptain() {
-        Team team = generateTeamWithIdAndNoCaptain(1);
+        Team team = generateTeamWithIdAndNoPlayers(1);
         TeamDto teamDto = new TeamDto();
         mapTeamFieldsOnTeamDtoFields(team, teamDto);
         TeamDto actual = TeamMapper.teamToTeamDto(team);
@@ -27,7 +27,7 @@ class TeamMapperTest {
 
     @Test
     void teamToTeamDtoWithCaptainReturnsTeamDtoWithCaptainDto() {
-        Team team = generateTeamWithIdAndNoCaptain(1);
+        Team team = generateTeamWithIdAndNoPlayers(1);
         Player captain = generatePlayerWithIdAndNoTeam(1);
         team.setCaptain(captain);
         TeamDto teamDto = new TeamDto();
@@ -38,7 +38,7 @@ class TeamMapperTest {
 
     @Test
     void teamDtoToTeamWithoutCaptainReturnsTeamWithNullCaptain() {
-        Team team = generateTeamWithIdAndNoCaptain(1);
+        Team team = generateTeamWithIdAndNoPlayers(1);
         TeamDto teamDto = new TeamDto();
         mapTeamFieldsOnTeamDtoFields(team, teamDto);
         Team actual = TeamMapper.teamDtoToTeam(teamDto);
@@ -47,7 +47,7 @@ class TeamMapperTest {
 
     @Test
     void teamDtoToTeamWithCaptainReturnsTeamWithCaptain() {
-        Team team = generateTeamWithIdAndNoCaptain(1);
+        Team team = generateTeamWithIdAndNoPlayers(1);
         Player captain = generatePlayerWithIdAndNoTeam(1);
         team.setCaptain(captain);
         TeamDto teamDto = new TeamDto();
@@ -58,9 +58,9 @@ class TeamMapperTest {
 
     @Test
     void listTeamToListTeamDto() {
-        Team team1 = generateTeamWithIdAndNoCaptain(1);
-        Team team2 = generateTeamWithIdAndNoCaptain(2);
-        Team team3 = generateTeamWithIdAndNoCaptain(3);
+        Team team1 = generateTeamWithIdAndNoPlayers(1);
+        Team team2 = generateTeamWithIdAndNoPlayers(2);
+        Team team3 = generateTeamWithIdAndNoPlayers(3);
         List<Team> teams = List.of(team1, team2, team3);
         List<TeamDto> teamsDto = TeamMapper.listTeamToListTeamDto(teams);
         assertThat(teams.size(), equalTo(teamsDto.size()));

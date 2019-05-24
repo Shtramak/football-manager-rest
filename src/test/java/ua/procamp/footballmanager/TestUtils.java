@@ -25,7 +25,7 @@ public class TestUtils {
         return player;
     }
 
-    public static Team generateTeamWithIdAndNoCaptain(long id) {
+    public static Team generateTeamWithIdAndNoPlayers(long id) {
         Team team = new Team();
         team.setId(id);
         team.setName("Team-" + id);
@@ -33,7 +33,7 @@ public class TestUtils {
     }
 
     public static Team generateTeamWithIdAndPlayers(long id, int numberOfPlayers) {
-        Team team = generateTeamWithIdAndNoCaptain(id);
+        Team team = generateTeamWithIdAndNoPlayers(id);
         Class<? extends Team> teamClass = team.getClass();
         try {
             Method setPlayers = teamClass.getDeclaredMethod("setPlayers", Set.class);
