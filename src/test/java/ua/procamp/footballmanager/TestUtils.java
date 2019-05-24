@@ -7,8 +7,12 @@ import ua.procamp.footballmanager.entity.Player;
 import ua.procamp.footballmanager.entity.Position;
 import ua.procamp.footballmanager.entity.Team;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TestUtils {
     public static Player generatePlayerWithIdAndNoTeam(long id) {
@@ -26,6 +30,29 @@ public class TestUtils {
         team.setId(id);
         team.setName("Team-" + id);
         return team;
+    }
+
+    public static Team generateTeamWithIdAndPlayers(long id, int numberOfPlayers) {
+        Team team = generateTeamWithIdAndNoCaptain(id);
+        Class<? extends Team> teamClass = team.getClass();
+        try {
+            Method setPlayers = teamClass.getDeclaredMethod("setPlayers", Set.class);
+            setPlayers.setAccessible(true);
+            setPlayers.invoke(team, setOfPlayers(team, numberOfPlayers));
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return team;
+    }
+
+    private static Set<Player> setOfPlayers(Team team, int number) {
+        Set<Player> players = new HashSet<>();
+        for (int i = 0; i < number; i++) {
+            Player player = generatePlayerWithIdAndNoTeam(i);
+            player.setTeam(team);
+            players.add(player);
+        }
+        return players;
     }
 
     public static void mapPlayerFieldsOnPlayerDtoFields(Player player, PlayerDto playerDto) {
