@@ -38,11 +38,27 @@ public class CustomTeamRepositoryImpl implements CustomTeamRepository {
         Set<Player> players = managedTeam.getPlayers();
         if (containsPlayerId(playerId, players)) {
             Player player = managedPlayer(playerId);
-
             managedTeam.setCaptain(player);
         } else {
             String message = String.format("Player with id %d is not a player of team %s", playerId, managedTeam.getName());
             throw new EntityNotFoundException(message);
+        }
+    }
+
+    @Override
+    public void removeById(long teamId) {
+        Team team = entityManager.find(Team.class, teamId);
+        leaveTeamPlayersWithoutWork(team);
+        entityManager.remove(team);
+    }
+
+    private void leaveTeamPlayersWithoutWork(Team team) {
+        if (team != null) {
+            team.getPlayers().forEach(player -> player.setTeam(null));
+            Player captain = team.getCaptain();
+            if (captain != null) {
+                captain.setTeam(null);
+            }
         }
     }
 

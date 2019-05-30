@@ -15,4 +15,9 @@ public interface TeamRepository extends JpaRepository<Team, Long>, CustomTeamRep
 
     @Query("SELECT DISTINCT t FROM Team t LEFT JOIN FETCH t.players left join fetch t.captain")
     List<Team> findAll();
+
+    @Override
+    default void deleteById(Long teamId) {
+        removeById(teamId);
+    }
 }
