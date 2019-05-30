@@ -49,7 +49,6 @@ public class CustomTeamRepositoryImpl implements CustomTeamRepository {
     public void removeById(long teamId) {
         Team team = entityManager.find(Team.class, teamId);
         leaveTeamPlayersWithoutWork(team);
-        entityManager.remove(team);
     }
 
     private void leaveTeamPlayersWithoutWork(Team team) {
@@ -59,6 +58,7 @@ public class CustomTeamRepositoryImpl implements CustomTeamRepository {
             if (captain != null) {
                 captain.setTeam(null);
             }
+            entityManager.remove(team);
         }
     }
 
