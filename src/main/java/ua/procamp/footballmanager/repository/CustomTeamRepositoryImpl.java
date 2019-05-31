@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.procamp.footballmanager.entity.Player;
 import ua.procamp.footballmanager.entity.Team;
 import ua.procamp.footballmanager.exception.EntityNotFoundException;
+import ua.procamp.footballmanager.exception.PersistEntityWithIdException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,21 +19,20 @@ public class CustomTeamRepositoryImpl implements CustomTeamRepository {
 
     @Override
     public void addNewPlayerToTeam(long teamId, Player player) {
-        Team managedTeam = entityManager.createQuery("select t from Team t where t.id=:id", Team.class)
-                .setParameter("id", teamId)
-                .getSingleResult();
-        Long playerId = player.getId();
-        if (playerId == null) {
-            managedTeam.addPlayer(player);
-        } else {
-            Player managedPlayer = managedPlayer(playerId);
-            managedTeam.addPlayer(managedPlayer);
+        if (player.getId() != null) {
+            String message = String.format("Persisting Player with id=%d is not acceptable...", player.getId());
+            throw new PersistEntityWithIdException(message);
         }
+        Team team = entityManager.getReference(Team.class, teamId);
+        player.setTeam(team);
+        entityManager.persist(player);
+        entityManager.flush();
     }
 
     @Override
     public void assignCaptainByTeam(long teamId, long playerId) {
-        Team managedTeam = entityManager.createQuery("select t from Team t left join fetch t.players where t.id=:id", Team.class)
+        Team managedTeam = entityManager
+                .createQuery("select t from Team t left join fetch t.players where t.id=:id", Team.class)
                 .setParameter("id", teamId)
                 .getSingleResult();
         Set<Player> players = managedTeam.getPlayers();
