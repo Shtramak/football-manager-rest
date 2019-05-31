@@ -1,5 +1,6 @@
 package ua.procamp.footballmanager.config;
 
+import com.p6spy.engine.spy.P6DataSource;
 import org.h2.jdbcx.JdbcDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,8 +15,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories("ua.procamp.footballmanager.repository")
@@ -27,13 +26,12 @@ public class JpaTestConfig {
         dataSource.setUrl("jdbc:h2:mem:test_db;;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
         dataSource.setUser("sa");
         dataSource.setPassword("");
-        return dataSource;
+        return new P6DataSource(dataSource);
     }
 
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-        jpaVendorAdapter.setShowSql(true);
         jpaVendorAdapter.setGenerateDdl(true);
         jpaVendorAdapter.setDatabase(Database.H2);
         return jpaVendorAdapter;
@@ -45,9 +43,6 @@ public class JpaTestConfig {
         emf.setDataSource(dataSource());
         emf.setJpaVendorAdapter(jpaVendorAdapter());
         emf.setPackagesToScan("ua.procamp.footballmanager.entity");
-        Map<String, String> properties = new HashMap<>();
-        properties.put("hibernate.format_sql", "true");
-        emf.setJpaPropertyMap(properties);
         return emf;
     }
 
