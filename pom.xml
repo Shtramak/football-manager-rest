@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.jupiter.version>5.4.2</junit.jupiter.version>
         <springframework.version>5.1.7.RELEASE</springframework.version>
-        <spring-data-jpa.version>2.1.6.RELEASE</spring-data-jpa.version>
+        <spring-data-jpa.version>2.1.9.RELEASE</spring-data-jpa.version>
     </properties>
 
     <dependencies>
